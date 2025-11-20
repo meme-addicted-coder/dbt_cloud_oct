@@ -1,3 +1,8 @@
+
+{{ config(
+    materialized = 'ephemeral'
+) }}
+
 with supply as (
     select      
         -- ids

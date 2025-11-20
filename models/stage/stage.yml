@@ -12,19 +12,32 @@ models:
         data_tests:
           - accepted_values:
               arguments:
-                values: ['ASIA', 'AFRICA', 'AMERICA']
+                values: ['ASIA', 'AFRICA', 'AMERICA','MIDDLE EAST','SOUTH EAST','EUROPE']
                 config:
                   store_failures: true
                   schema: error
 
   - name: stg_nations
+    config:
+      group: sales
+      contract:
+        enforced: true 
     columns:
       - name: nation_id
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: name
+        data_type: string
+      - name: updated_at
+        data_type: timestamp
+
         description: '{{doc("primary_key")}}'
         data_tests:
           - not_null
           - unique
       - name: region_id
+        data_type: int
         description: '{{doc("foreign_key")}}'
         data_tests:
           - relationships:
@@ -32,6 +45,9 @@ models:
               field: region_id
 
   - name: stg_customer
+    config:
+      group: sales
+      pre_hook: "alter session set query_tag= 'hooks'"
     columns:
       - name: customer_id
         description: '{{doc("primary_key")}}'
