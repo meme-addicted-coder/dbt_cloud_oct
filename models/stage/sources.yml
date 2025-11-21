@@ -7,15 +7,16 @@ sources:
       - name: nations
       - name: regions
       - name: orders
-      - name: lineitems
-      - name : suppliers
-      - name : partsupps
-      - name: parts
         config:
           freshness:
             warn_after: {count: 3, period: day}
             error_after: {count: 3, period: day}
           loaded_at_field: o_orderdate::timestamp_ntz
+      - name: lineitems
+      - name : suppliers
+      - name : partsupps
+      - name: parts
+
 
   - name: src_mkmotors
     database: mkmotors_dev
