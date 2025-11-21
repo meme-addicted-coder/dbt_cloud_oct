@@ -1,5 +1,7 @@
 {{ config(
-    alias =this.name+ var('v_id')
+    query_tag='TEST1',
+    alias =this.name+ var('v_id'),
+    access= 'public'
 ) }}
 
 with nation as (select 
