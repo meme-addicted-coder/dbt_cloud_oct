@@ -1,21 +1,19 @@
 {{ config(
-    materialized='dynamic_table',
-    target_lag='5 minutes',
-    snowflake_warehouse='transform_wh',
-    refresh_mode= 'incremental'
-)}}
+    materialized = 'dynamic_table',
+    target_lag = '5 minutes',
+    snowflake_warehouse = 'TRANSFORM_WH'
+) }}
 
 with dy as (
-    SELECT
-    n.name,
-    COUNT(c.customer_id)      AS total_customers,
-    SUM(c.account_balance)     AS total_account_balance
-FROM {{ ref('stg_customer') }} c
-JOIN {{ ref('stg_nations') }} n
-    ON c.nation_id = n.nation_id
-GROUP BY
-    n.name
-ORDER BY
-    n.name
+    select
+        n.name,
+        count(c.customer_id) as total_customers,
+        sum(c.account_balance) as total_account_balance
+    from {{ ref('stg_customer') }} c
+    join {{ ref('stg_nations') }} n
+        on c.nation_id = n.nation_id
+    group by n.name
 )
+
 select * from dy
+

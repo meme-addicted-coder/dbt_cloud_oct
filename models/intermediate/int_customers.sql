@@ -1,6 +1,6 @@
 with customers as (
     select
-        customers_id,
+        customer_id,
         name                as customer_name,
         address             as customer_address,
         nation_id,
@@ -31,7 +31,7 @@ regions as (
 final as (
     select
         -- Customer columns
-        c.customers_id,
+        c.customer_id,
         c.customer_name,
         c.customer_address,
         c.phone_number,
