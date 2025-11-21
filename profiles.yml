@@ -1,4 +1,4 @@
-sdbtcloud:
+dbtcloud:
   outputs:
     dev:
       account: ZSB79329
@@ -11,4 +11,5 @@ sdbtcloud:
       user: sachin
       warehouse: TRANSFORM_WH
   target: dev
+
 
