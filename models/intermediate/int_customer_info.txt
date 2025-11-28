@@ -1,11 +1,53 @@
--- customer_id 
--- customer_name
--- nation_id 
--- first_ordered_at 
--- last_ordered_at
--- lifetime_orders
--- lifetime_tax
--- lifetime_total
--- customer_type
+{{ config(
+    materialized = 'dynamic_table',
+    target_lag = '10 minutes',
+    snowflake_warehouse = 'TRANSFORM_WH'
+) }}
 
--- customer aur lineitem use krna h
+WITH combined AS (
+
+    SELECT 
+        c.customer_id AS customer_id,
+        c.name AS customer_name,
+        c.market_segment AS customer_market_segment,
+
+        MIN(o.order_date) AS first_ordered_at,
+        MAX(o.order_date) AS last_ordered_at,
+
+        COUNT(o.order_id) AS lifetime_orders,
+
+        SUM(l.extended_price * l.tax) AS total_tax,
+
+        SUM(l.extended_price * (1 - l.discount) * (1 + l.tax)) AS lifetime_total,
+
+        CASE 
+            WHEN COUNT(o.order_id) = 1 THEN 'New Customer'
+            ELSE 'Returning Customer'
+        END AS customer_status,
+
+        CASE 
+            WHEN SUM(l.extended_price * (1 - l.discount) * (1 + l.tax)) > 500000 
+                THEN 'VIP'
+            WHEN SUM(l.extended_price * (1 - l.discount) * (1 + l.tax)) BETWEEN 100000 AND 500000 
+                THEN 'Mid-Tier'
+            ELSE 'Low Spender'
+        END AS customer_spending_type
+
+    FROM 
+        {{ ref('stg_customer') }} c
+    JOIN 
+        {{ ref('stg_orders') }} o 
+        ON c.customer_id = o.customer_id
+    JOIN 
+        {{ ref('stg_line_items') }} l 
+        ON o.order_id = l.order_id
+
+    GROUP BY 
+        c.customer_id,
+        c.name,
+        c.market_segment
+)
+
+SELECT *
+FROM combined
+ORDER BY lifetime_total DESC;
