@@ -21,6 +21,9 @@ changed as (
 
         --dates
         o_orderdate as order_date,
+        {{dbt_meta()}}
     from source
 )              
-select * from changed
+
+SELECT *
+FROM changed c

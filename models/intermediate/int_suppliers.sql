@@ -59,4 +59,9 @@ final as (
         on n.region_id = r.region_id
 )
 
-select * from final
+SELECT *
+EXCLUDE (
+    nation_id,
+    region_id
+)
+FROM final
